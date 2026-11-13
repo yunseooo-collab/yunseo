@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>최윤서 | MyLink (마이링크)</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        nursing: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            900: '#134e4a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome 아이콘 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Pretendard 폰트 CDN -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <style>
+        body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        /* Glassmorphism 효과 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* 카드 호버 트랜지션 */
+        .link-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .link-card-hover:hover {
+            transform: translateY(-3px) scale(1.01);
+        }
+
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-teal-50 via-slate-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col items-center justify-between p-4 sm:p-6 pb-20">
+
+    <!-- 상단 툴바 (테마 토글 & 알림 & 안내 모달 버튼) -->
+    <header class="w-full max-w-lg flex justify-between items-center mb-6 pt-2 px-2">
+        <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                <i class="fa-solid fa-graduation-cap mr-1.5"></i> SELC 학점인정
+            </span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <!-- 과제 제출 안내 모달 열기 버튼 -->
+            <button onclick="toggleModal('guide-modal')" title="과제 제출 안내 보기" class="p-2.5 rounded-full glass-card hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-circle-info text-lg"></i>
+            </button>
+            <!-- 테마 토글 버튼 -->
+            <button id="theme-toggle" onclick="toggleDarkMode()" title="다크모드 변경" class="p-2.5 rounded-full glass-card hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors text-slate-600 dark:text-slate-300">
+                <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-lg hidden"></i>
+                <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-lg text-amber-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <main class="w-full max-w-lg space-y-6">
+
+        <!-- 프로필 섹션 -->
+        <section class="glass-card rounded-3xl p-6 text-center shadow-xl relative overflow-hidden border border-white/60 dark:border-slate-800">
+            <!-- 배경 데코레이션 원 -->
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col items-center">
+                <!-- 아바타 프로필 이미지 -->
+                <div class="relative mb-4 group">
+                    <div class="w-28 h-28 rounded-full ring-4 ring-teal-500/30 dark:ring-teal-400/20 overflow-hidden shadow-lg p-1 bg-white dark:bg-slate-800 transition-transform duration-300 group-hover:scale-105">
+                        <img src="https://images.unsplash.com/photo-1594824813566-7885a3964478?auto=format&fit=crop&w=300&q=80" 
+                             alt="Profile Avatar" 
+                             class="w-full h-full object-cover rounded-full"
+                             onerror="this.src='https://placehold.co/300x300/14b8a6/ffffff?text=RN+YS'">
+                    </div>
+                    <!-- 상태 배지 -->
+                    <span class="absolute bottom-1 right-1 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full ring-2 ring-white dark:ring-slate-900 flex items-center shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-white animate-pulse mr-1"></span> 재학중
+                    </span>
+                </div>
+
+                <!-- 이름 및 정보 -->
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                    최윤서 <span class="text-xs font-medium px-2 py-0.5 rounded bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300">간호학과</span>
+                </h1>
+                <p class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">학번: 20250812</p>
+
+                <!-- 한 줄 소개 -->
+                <p class="text-sm text-slate-600 dark:text-slate-300 mt-3 max-w-xs leading-relaxed font-normal">
+                    🩺 따뜻한 마음과 전문성을 키워가는 간호학생입니다.<br>유용한 학술 자료와 일상을 공유합니다! ✨
+                </p>
+
+                <!-- 해시태그 -->
+                <div class="flex flex-wrap justify-center gap-1.5 mt-3">
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">#SELC</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">#간호학림</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">#SN_Student</span>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">#일상기록</span>
+                </div>
+
+                <!-- 소셜 링크 버튼 모음 -->
+                <div class="flex items-center space-x-3 mt-5">
+                    <a href="https://github.com" target="_blank" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-900 hover:text-white dark:hover:bg-slate-100 dark:hover:text-slate-900 transition-all shadow-sm">
+                        <i class="fa-brands fa-github text-lg"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-600 dark:text-pink-400 hover:bg-pink-600 hover:text-white dark:hover:bg-pink-600 dark:hover:text-white transition-all shadow-sm">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                    <a href="mailto:student@nursing.ac.kr" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-teal-600 dark:text-teal-400 hover:bg-teal-600 hover:text-white dark:hover:bg-teal-500 dark:hover:text-white transition-all shadow-sm">
+                        <i class="fa-regular fa-envelope text-lg"></i>
+                    </a>
+                    <button onclick="copyCurrentURL()" title="링크 공유하기" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-share-nodes text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 일일 간호 퀴즈 & 동기부여 미니 위젯 카드 -->
+        <section class="glass-card rounded-2xl p-4 shadow-md border border-teal-100 dark:border-teal-900/40 relative">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-stethoscope"></i> 오늘의 간호용어 한스푼
+                </span>
+                <button onclick="refreshQuiz()" class="text-xs text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                    <i class="fa-solid fa-rotate-right"></i> 새로고침
+                </button>
+            </div>
+            <div id="quiz-container" class="bg-white/60 dark:bg-slate-800/60 rounded-xl p-3 text-sm">
+                <p id="quiz-term" class="font-bold text-teal-900 dark:text-teal-200">Vital Signs (V/S)</p>
+                <p id="quiz-desc" class="text-xs text-slate-600 dark:text-slate-300 mt-1">활력징후 (체온, 맥박, 호흡, 혈압 등 생명 유지를 위한 기본 지표)</p>
+            </div>
+        </section>
+
+        <!-- 검색 및 카테고리 필터 -->
+        <section class="space-y-3">
+            <!-- 검색 입력창 -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="search-input" onkeyup="filterLinks()" placeholder="링크 검색 (예: 간호학, GitHub, 블로그...)" 
+                       class="w-full pl-10 pr-4 py-2.5 rounded-2xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 shadow-sm transition-all placeholder:text-slate-400">
+            </div>
+
+            <!-- 카테고리 탭 버튼 -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+                <button onclick="setCategory('all')" class="category-btn active px-3 py-1.5 rounded-xl font-medium bg-teal-600 text-white shadow-sm transition-all whitespace-nowrap" data-cat="all">전체</button>
+                <button onclick="setCategory('nursing')" class="category-btn px-3 py-1.5 rounded-xl font-medium bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-slate-700 transition-all whitespace-nowrap" data-cat="nursing">🩺 간호학 전공</button>
+                <button onclick="setCategory('study')" class="category-btn px-3 py-1.5 rounded-xl font-medium bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-slate-700 transition-all whitespace-nowrap" data-cat="study">📚 학습 & 대외활동</button>
+                <button onclick="setCategory('sns')" class="category-btn px-3 py-1.5 rounded-xl font-medium bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:bg-teal-50 dark:hover:bg-slate-700 transition-all whitespace-nowrap" data-cat="sns">🌐 SNS & 채널</button>
+            </div>
+        </section>
+
+        <!-- 마이링크 목록 섹션 -->
+        <section id="links-container" class="space-y-3">
+
+            <!-- 링크 카드 1: GitHub 저장소 과제 페이지 -->
+            <a href="https://github.com" target="_blank" data-category="study" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-brands fa-github"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">SELC 과제 GitHub Repository</h3>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 font-semibold">과제제출</span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">본 마이링크 프로젝트의 소스코드가 위치한 저장소</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 링크 카드 2: 대한간호협회 (KNA) -->
+            <a href="http://www.koreanurse.or.kr" target="_blank" data-category="nursing" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-400 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">대한간호협회 (KNA)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">간호계 주요 소식, 정책 및 학술 연구 정보 공식사이트</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 링크 카드 3: KNHLE 국시원 (간호사 국가고시) -->
+            <a href="https://www.kuksiwon.or.kr" target="_blank" data-category="nursing" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">한국보건의료인국가시험원</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">간호사 국가시험 일정, 원서접수 및 시험 합격자 발표</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 링크 카드 4: 간호학 스터디 블로그 / 노션 서재 -->
+            <a href="https://notion.so" target="_blank" data-category="study" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-book-medical"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">윤서의 간호학 실습 & 공부 노트</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">해부학, 약리학, 성인간호학 요약 노션 가이드</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 링크 카드 5: 개인 인스타그램 -->
+            <a href="https://instagram.com" target="_blank" data-category="sns" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">Instagram (@nursing_daily)</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">대학 생활, 공부 브이로그 및日常 소통 채널</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 링크 카드 6: YouTube 메디컬 영상 채널 -->
+            <a href="https://youtube.com" target="_blank" data-category="sns" class="link-card link-card-hover block glass-card p-4 rounded-2xl shadow-sm border border-white/80 dark:border-slate-800 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-red-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">추천 메디컬 YouTube 스터디</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">의학 애니메이션 시각 자료 및 간호 꿀팁 레퍼런스</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- 검색 결과 없음 메시지 -->
+            <div id="no-results" class="hidden text-center py-8 glass-card rounded-2xl">
+                <i class="fa-regular fa-face-frown text-3xl text-slate-400 mb-2"></i>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">검색 조건에 일치하는 링크가 없습니다.</p>
+                <button onclick="resetFilters()" class="mt-3 text-xs text-teal-600 dark:text-teal-400 underline font-semibold">전체 목록 보기</button>
+            </div>
+
+        </section>
+
+        <!-- 방명록 / 응원 메시지 전달 박스 -->
+        <section class="glass-card rounded-2xl p-5 shadow-md border border-white/80 dark:border-slate-800">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-1.5">
+                <i class="fa-regular fa-comment-dots text-teal-500"></i> 응원 한마디 남기기
+            </h3>
+            <div class="flex gap-2">
+                <input type="text" id="guestbook-input" placeholder="응원의 메시지를 입력해주세요..." class="flex-1 px-3.5 py-2 rounded-xl text-xs glass-card border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                <button onclick="addComment()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors">
+                    전송
+                </button>
+            </div>
+            <!-- 최근 댓글 목록 -->
+            <div id="comments-list" class="mt-3 space-y-1.5">
+                <div class="text-xs p-2.5 rounded-lg bg-white/40 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 flex justify-between">
+                    <span>💌 "SELC 학점인정 컨소시엄 과제 만점 기원합니다!"</span>
+                    <span class="text-[10px] text-slate-400">방금 전</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 푸터 정보 -->
+    <footer class="w-full max-w-lg mt-8 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
+        <p>© 2026 Choi Yun-seo (20250812). All rights reserved.</p>
+        <p class="text-[11px]">SELC 학점인정 컨소시엄 제출용 '마이링크' 프로젝트 페이지</p>
+    </footer>
+
+    <!-- 알림 토스트 (Toast Alert) -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-2xl z-50 flex items-center space-x-2 transition-all duration-300 opacity-0 pointer-events-none translate-y-4">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">클립보드에 주소가 복사되었습니다!</span>
+    </div>
+
+    <!-- 과제 제출 안내 모달 Modal -->
+    <div id="guide-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-white/50 dark:border-slate-800 space-y-4 text-left">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-teal-600"></i> 과제 제출 가이드 안내
+                </h3>
+                <button onclick="toggleModal('guide-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="text-xs space-y-3 text-slate-600 dark:text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+                <div class="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800">
+                    <p class="font-semibold text-teal-900 dark:text-teal-300">📌 배점 기준 (총 10점)</p>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-slate-700 dark:text-slate-300">
+                        <li><strong>GitHub 내 폴더 생성 (9점):</strong> 저장소 내 <code class="bg-teal-100 dark:bg-teal-900 px-1 rounded">mylink-folder</code> 작성</li>
+                        <li><strong>마이링크 주소 생성 (1점):</strong> 접속 가능한 URL 생성 및 공유</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1.5">
+                    <p class="font-semibold text-slate-900 dark:text-white">📋 제출 양식 예시:</p>
+                    <div class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-[11px] font-mono break-all space-y-1 select-all">
+                        <p><strong>1. GitHub 저장소 URL:</strong><br>https://github.com/username/mylink-folder</p>
+                        <p><strong>2. 마이링크(MyLink) URL:</strong><br>https://username.github.io/mylink-folder/</p>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <p class="font-semibold text-slate-900 dark:text-white">💡 GitHub Pages 배포 가이드 (3분 완료):</p>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>GitHub에 <code class="bg-slate-200 dark:bg-slate-700 px-1 rounded">mylink-folder</code> 저장소를 만듭니다.</li>
+                        <li>이 파일(<code class="bg-slate-200 dark:bg-slate-700 px-1 rounded">index.html</code>)을 해당 저장소 루트에 올립니다.</li>
+                        <li><strong>Settings > Pages</strong> 메뉴 진입</li>
+                        <li>Source를 <strong>Deploy from a branch (main/master)</strong>로 지정 후 Save 클릭</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="toggleModal('guide-modal')" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold transition-colors">
+                    확인했습니다
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 동적 인터랙션 로직 -->
+    <script>
+        // 1. 다크모드 설정 및 토글
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+            }
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                showToast("라이트 모드로 변경되었습니다.");
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+                showToast("다크 모드로 변경되었습니다.");
+            }
+        }
+
+        // 2. 토스트 알림 팝업 기능
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }, 2500);
+        }
+
+        // 3. 현재 페이지 URL 복사 기능 (클립보드)
+        function copyCurrentURL() {
+            const currentURL = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(currentURL).then(() => {
+                    showToast("마이링크 URL이 클립보드에 복사되었습니다! 🎉");
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(currentURL);
+                });
+            } else {
+                fallbackCopyTextToClipboard(currentURL);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("마이링크 URL이 복사되었습니다! 🎉");
+            } catch (err) {
+                showToast("URL 복사에 실패했습니다.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // 4. 모달 토글 열기/닫기
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // 5. 카테고리 필터링 기능
+        let currentCategory = 'all';
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-cat') === cat) {
+                    btn.classList.remove('bg-white/70', 'dark:bg-slate-800/70', 'text-slate-600', 'dark:text-slate-300');
+                    btn.classList.add('bg-teal-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-white/70', 'dark:bg-slate-800/70', 'text-slate-600', 'dark:text-slate-300');
+                    btn.classList.remove('bg-teal-600', 'text-white');
+                }
+            });
+            filterLinks();
+        }
+
+        function filterLinks() {
+            const searchValue = document.getElementById('search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.link-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const categoryMatch = (currentCategory === 'all') || (card.getAttribute('data-category') === currentCategory);
+                const textMatch = card.innerText.toLowerCase().includes(searchValue);
+
+                if (categoryMatch && textMatch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const noResults = document.getElementById('no-results');
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            setCategory('all');
+        }
+
+        // 6. 일일 간호 용어 / 명언 랜덤 퀴즈 갱신
+        const medicalTerms = [
+            { term: "Vital Signs (V/S)", desc: "활력징후 (체온, 맥박, 호흡, 혈압 등 생명 유지를 위한 기본 지표)" },
+            { term: "NPO (Nil Per Os)", desc: "금식 (수술이나 검사를 위해 입으로 아무것도 섭취하지 않는 상태)" },
+            { term: "CPR (Cardiopulmonary Resuscitation)", desc: "심폐소생술 (심장정지 환자의 생명을 구하는 응급처치)" },
+            { term: "Stat (Statim)", desc: "즉시 (의사 처방 시 즉각 시행해야 하는 긴급 지시)" },
+            { term: "IV (Intravenous)", desc: "정맥 내 (정맥 주사를 통해 약물이나 수액을 투여)" }
+        ];
+
+        function refreshQuiz() {
+            const randomItem = medicalTerms[Math.floor(Math.random() * medicalTerms.length)];
+            const termElem = document.getElementById('quiz-term');
+            const descElem = document.getElementById('quiz-desc');
+            
+            termElem.innerText = randomItem.term;
+            descElem.innerText = randomItem.desc;
+            showToast("새로운 간호 용어로 갱신되었습니다!");
+        }
+
+        // 7. 간단 방명록 댓글 추가 기능
+        function addComment() {
+            const input = document.getElementById('guestbook-input');
+            const text = input.value.trim();
+            if (!text) {
+                showToast("응원 메시지를 입력해주세요!");
+                return;
+            }
+
+            const list = document.getElementById('comments-list');
+            const newComment = document.createElement('div');
+            newComment.className = "text-xs p-2.5 rounded-lg bg-white/40 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 flex justify-between animate-fade-in";
+            newComment.innerHTML = `<span>💌 "${escapeHtml(text)}"</span><span class="text-[10px] text-slate-400">방금 전</span>`;
+            
+            list.prepend(newComment);
+            input.value = '';
+            showToast("응원 메시지가 등록되었습니다! 💖");
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+        });
+    </script>
+</body>
+</html>
